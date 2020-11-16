@@ -26,12 +26,12 @@ function checkAuthStatus (request) {
 
 router.get("/", function (req, res) {
     db.User.findAll().then( function (dbUsers) {
-        res.json(dbUsers);
+        return res.json(dbUsers);
     }).catch(err => {
         console.log(err);
-        res.status(500).end();
-    })
-})
+        return res.status(500).end();
+    });
+});
 
 router.post("/", function (req, res) {
     db.User.create({
@@ -42,12 +42,12 @@ router.post("/", function (req, res) {
         phone: req.body.phone,
         isOwner: req.body.isOwner
     }).then(function(newUser) {
-        res.json(newUser);
+        return res.json(newUser);
     }).catch(function(err) {
         console.log(err);
-        res.status(500).end();
-    })
-})
+        return res.status(500).end();
+    });
+});
 
 router.post("/login", function (req, res) {
     db.User.findOne({
@@ -72,8 +72,8 @@ router.post("/login", function (req, res) {
         } else {
             return res.status(403).send("wrong password")
         }
-    })
-})
+    });
+});
 
 router.get("/buyerProfile", (req, res) => {
     const loggedInUser = checkAuthStatus(req);
@@ -95,13 +95,13 @@ router.get("/buyerProfile", (req, res) => {
             }
         }]
     }).then(dbUser => {
-        res.json(dbUser)
+        return res.json(dbUser)
     }).catch(err => {
         console.log(err);
-        res.status(500).send("an error occurred please try again later");
-    })
+        return res.status(500).send("an error occurred please try again later");
+    });
 
-})
+});
 
 router.get("/bakerProfile", (req, res) => {
     const loggedInUser = checkAuthStatus(req);
@@ -155,12 +155,12 @@ router.get("/bakerProfile", (req, res) => {
             }
         ]
     }).then(dbUser => {
-        res.json(dbUser)
+        return res.json(dbUser)
     }).catch(err => {
         console.log(err);
-        res.status(500).send("an error occurred please try again later");
-    })
+        return res.status(500).send("an error occurred please try again later");
+    });
 
-})
+});
 
 module.exports = router
