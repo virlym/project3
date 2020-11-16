@@ -4,14 +4,14 @@ const db = require('../models')
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const checkAuthStatus = request => {
-    console.log(request.headers);
+function checkAuthStatus (request) {
+    //console.log(request.headers);
     if (!request.headers.authorization) {
         return false
     }
     const token = request.headers.authorization.split(" ")[1]
-    console.log(token);
-    const loggedInUser = jwt.verify(token, process.env.JWT_SECRET, (err, data) => {
+    //console.log(token);
+    const loggedInUser = jwt.verify(token, process.env.JWT_SECRET, function (err, data) {
         if (err) {
             return false
         }
@@ -19,13 +19,13 @@ const checkAuthStatus = request => {
             return data
         }
     });
-    console.log(loggedInUser)
+    //console.log(loggedInUser)
     return loggedInUser
 }
 
 
-router.get("/", (req, res) => {
-    db.User.findAll().then(dbUsers => {
+router.get("/", function (req, res) {
+    db.User.findAll().then( function (dbUsers) {
         res.json(dbUsers);
     }).catch(err => {
         console.log(err);
@@ -33,20 +33,23 @@ router.get("/", (req, res) => {
     })
 })
 
-router.post("/", (req, res) => {
+router.post("/", function (req, res) {
     db.User.create({
         email: req.body.email,
-        name: req.body.name,
-        password: req.body.password
-    }).then(newUser => {
+        username: req.body.username,
+        password: req.body.password,
+        address: req.body.address,
+        phone: req.body.phone,
+        isOwner: req.body.isOwner
+    }).then(function(newUser) {
         res.json(newUser);
-    }).catch(err => {
+    }).catch(function(err) {
         console.log(err);
         res.status(500).end();
     })
 })
 
-router.post("/login", (req, res) => {
+router.post("/login", function (req, res) {
     db.User.findOne({
         where: {
             email: req.body.email,
@@ -59,7 +62,10 @@ router.post("/login", (req, res) => {
             const userTokenInfo = {
                 email: foundUser.email,
                 id: foundUser.id,
-                name: foundUser.name
+                username: foundUser.name,
+                address: foundUser.address,
+                phone: foundUser.phone,
+                isOwner: foundUser.isOwner
             }
             const token = jwt.sign(userTokenInfo, process.env.JWT_SECRET, { expiresIn: "2h" });
             return res.status(200).json({ token: token })
@@ -69,30 +75,92 @@ router.post("/login", (req, res) => {
     })
 })
 
-router.get("/secretProfile", (req, res) => {
+router.get("/buyerProfile", (req, res) => {
     const loggedInUser = checkAuthStatus(req);
     console.log(loggedInUser);
     if (!loggedInUser) {
         return res.status(401).send("invalid token")
+    }
+    if (loggedInUser.isOwner){
+        return res.status(401).send("invalid user path");
     }
     db.User.findOne({
         where: {
             id: loggedInUser.id
         },
         include: [{
-            model: db.Tank,
-            include: [db.Fish]
-        },
-        db.Fish]
+            model: db.Order,
+            where: {
+                buyer_id: loggedInUser.id
+            }
+        }]
     }).then(dbUser => {
         res.json(dbUser)
     }).catch(err => {
         console.log(err);
-        res.status(500).send("an error occured please try again later");
+        res.status(500).send("an error occurred please try again later");
     })
 
 })
 
+router.get("/bakerProfile", (req, res) => {
+    const loggedInUser = checkAuthStatus(req);
+    console.log(loggedInUser);
+    if (!loggedInUser) {
+        return res.status(401).send("invalid token")
+    }
+    if (!loggedInUser.isOwner){
+        return res.status(401).send("invalid user path");
+    }
+    db.User.findOne({
+        where: {
+            id: loggedInUser.id
+        },
+        include: [
+            {
+                model: db.Order,
+                where: {
+                    baker_id: loggedInUser.id
+                }
+            },
+            {
+                model: db.Inventory,
+                where: {
+                    baker_id: loggedInUser.id
+                }
+            },
+            {
+                model: db.InvChanges,
+                where: {
+                    baker_id: loggedInUser.id
+                }
+            },
+            {
+                model: db.PreMade,
+                where: {
+                    baker_id: loggedInUser.id
+                }
+            },
+            {
+                model: db.Pricing,
+                where: {
+                    baker_id: loggedInUser.id
+                }
+            },
+            {
+                model: db.Revenue,
+                where: {
+                    baker_id: loggedInUser.id
+                }
+            }
+        ]
+    }).then(dbUser => {
+        res.json(dbUser)
+    }).catch(err => {
+        console.log(err);
+        res.status(500).send("an error occurred please try again later");
+    })
 
+})
 
 module.exports = router
