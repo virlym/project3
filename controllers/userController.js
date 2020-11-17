@@ -7,6 +7,7 @@ const { Op } = require("sequelize");
 
 function checkAuthStatus (request) {
     //console.log(request.headers);
+    console.log("hi");
     if (!request.headers.authorization) {
         return false
     }
@@ -31,19 +32,6 @@ router.get("/", function (req, res) {
     }).catch(err => {
         console.log(err);
         return res.status(500).end();
-    });
-});
-
-router.get("/:id", function(req, res) {
-    db.User.findOne({
-        where: {
-            id: req.params.id
-        }
-    }).then(function(dbUser) {
-        return res.json(dbUser);
-    }).catch(function(err) {
-        console.log(err);
-        return res.status(500).send("something went wrong");
     });
 });
 
@@ -121,6 +109,7 @@ router.get("/buyer", (req, res) => {
 });
 
 router.get("/baker", (req, res) => {
+    console.log("entered");
     const loggedInUser = checkAuthStatus(req);
     console.log(loggedInUser);
     if (!loggedInUser) {
@@ -129,7 +118,7 @@ router.get("/baker", (req, res) => {
     if (!loggedInUser.isOwner){
         return res.status(401).send("invalid user path");
     }
-    console.log({[Op.col]: "baker_id"});
+    //console.log({[Op.col]: "baker_id"});
     db.User.findOne({
         where: {
             id: loggedInUser.id
@@ -171,6 +160,19 @@ router.get("/baker", (req, res) => {
         return res.status(500).send("an error occurred please try again later");
     });
 
+});
+
+router.get("/:id", function(req, res) {
+    db.User.findOne({
+        where: {
+            id: req.params.id
+        }
+    }).then(function(dbUser) {
+        return res.json(dbUser);
+    }).catch(function(err) {
+        console.log(err);
+        return res.status(500).send("something went wrong");
+    });
 });
 
 module.exports = router
