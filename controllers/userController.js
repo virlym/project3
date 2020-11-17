@@ -43,7 +43,7 @@ router.get("/:id", function(req, res) {
         return res.json(dbUser);
     }).catch(function(err) {
         console.log(err);
-        return res.status(500).send("something want wrong");
+        return res.status(500).send("something went wrong");
     });
 });
 

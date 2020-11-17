@@ -28,7 +28,7 @@ router.get("/", function(req, res) {
         return res.json(inv);
     }).catch(function(err) {
         console.log(err);
-        return res.status(500).send("something want wrong");
+        return res.status(500).send("something went wrong");
     });
 });
 
@@ -41,7 +41,7 @@ router.get("/:id", function(req, res) {
         return res.json(dbInv);
     }).catch(function(err) {
         console.log(err);
-        return res.status(500).send("something want wrong");
+        return res.status(500).send("something went wrong");
     });
 });
 
@@ -64,7 +64,7 @@ router.post("/", function(req, res) {
        return res.json(newInv);
     }).catch(function(err) {
         console.log(err);
-        return res.status(500).send("something want wrong");
+        return res.status(500).send("something went wrong");
     });
 });
 
@@ -95,7 +95,7 @@ router.put("/:id", function(req, res) {
                     return res.json(editInv)
                 }).catch(function(err) {
                     console.log(err);
-                    return res.status(500).send("something want wrong");
+                    return res.status(500).send("something went wrong");
                 })
         } else {
             return res.status(401).send("not your inventory")
@@ -125,7 +125,7 @@ router.delete("/:id", function(req, res) {
                 return res.json(delInv)
             }).catch(function(err) {
                 console.log(err);
-                return res.status(500).send("something want wrong");
+                return res.status(500).send("something went wrong");
             })
         } else {
             return res.status(401).send("not your inventory")
