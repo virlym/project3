@@ -34,6 +34,19 @@ router.get("/", function (req, res) {
     });
 });
 
+router.get("/:id", function(req, res) {
+    db.User.findOne({
+        where: {
+            id: req.params.id
+        }
+    }).then(function(dbUser) {
+        return res.json(dbUser);
+    }).catch(function(err) {
+        console.log(err);
+        return res.status(500).send("something went wrong");
+    });
+});
+
 router.post("/", function (req, res) {
     db.User.create({
         email: req.body.email,
@@ -76,7 +89,7 @@ router.post("/login", function (req, res) {
     });
 });
 
-router.get("/buyerProfile", (req, res) => {
+router.get("/buyer", (req, res) => {
     const loggedInUser = checkAuthStatus(req);
     console.log(loggedInUser);
     if (!loggedInUser) {
@@ -107,7 +120,7 @@ router.get("/buyerProfile", (req, res) => {
 
 });
 
-router.get("/bakerProfile", (req, res) => {
+router.get("/baker", (req, res) => {
     const loggedInUser = checkAuthStatus(req);
     console.log(loggedInUser);
     if (!loggedInUser) {

@@ -28,7 +28,7 @@ router.get("/", function(req, res) {
         return res.json(pre);
     }).catch(function(err) {
         console.log(err);
-        return res.status(500).send("something want wrong");
+        return res.status(500).send("something went wrong");
     });
 });
 
@@ -41,7 +41,7 @@ router.get("/:id", function(req, res) {
         return res.json(dbPre);
     }).catch(function(err) {
         console.log(err);
-        return res.status(500).send("something want wrong");
+        return res.status(500).send("something went wrong");
     });
 });
 
@@ -65,7 +65,7 @@ router.post("/", function(req, res) {
        return res.json(newInv);
     }).catch(function(err) {
         console.log(err);
-        return res.status(500).send("something want wrong");
+        return res.status(500).send("something went wrong");
     });
 });
 
@@ -97,7 +97,7 @@ router.put("/:id", function(req, res) {
                     return res.json(editPre)
                 }).catch(function(err) {
                     console.log(err);
-                    return res.status(500).send("something want wrong");
+                    return res.status(500).send("something went wrong");
                 })
         } else {
             return res.status(401).send("not your baked goods")
@@ -127,7 +127,7 @@ router.delete("/:id", function(req, res) {
                 return res.json(delPre)
             }).catch(function(err) {
                 console.log(err);
-                return res.status(500).send("something want wrong");
+                return res.status(500).send("something went wrong");
             })
         } else {
             return res.status(401).send("not your baked goods")
