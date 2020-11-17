@@ -54,28 +54,16 @@ router.post("/", function(req, res) {
         return res.status(401).send("invalid user path");
     }
     console.log(loggedInUser);
-    db.InvChanges.findOne({
-        where:{
-            id:req.body.id
-        }
-    }).then(function(invData) {
-        if(invData.baker_id === loggedInUser.id){
-            db.InvChanges.create({
-                name: req.body.name,
-                quantity: req.body.quantity,
-                metric: req.body.metric,
-                handled: req.body.handled,
-                type: req.body.type,
-                baker_id: loggedInUser.id
-            }).then(function(newInv) {
-               return res.json(newInv);
-            }).catch(function(err) {
-                console.log(err);
-                return res.status(500).send("something want wrong");
-            })
-        } else{
-            return res.status(401).send("not your inventory")
-        }
+    db.InvChanges.create({
+        ingredients: req.body.ingredients,
+        handled: req.body.handled,
+        origin: req.body.origin,
+        baker_id: loggedInUser.id
+    }).then(function(newInv) {
+       return res.json(newInv);
+    }).catch(function(err) {
+        console.log(err);
+        return res.status(500).send("something want wrong");
     });
 });
 
@@ -94,11 +82,9 @@ router.put("/:id", function(req, res) {
     }).then(function(inv) {
         if (loggedInUser.id === inv.baker_id) {
             db.InvChanges.update({
-                name: req.body.name,
-                quantity: req.body.quantity,
-                metric: req.body.metric,
+                ingredients: req.body.ingredients,
                 handled: req.body.handled,
-                type: req.body.type
+                origin: req.body.origin
             }, {
                     where: {
                         id: inv.id

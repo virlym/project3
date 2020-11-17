@@ -17,11 +17,11 @@ app.use(express.json());
 
 //PRODUCTION CORS
 // app.use(cors({
-//     origin:["https://augfishtank.herokuapp.com"]
-// }))
+//     origin:["https://the-pantry-app.herokuapp.com/"]
+// }));
 
 //DEV CORS
-app.use(cors())
+app.use(cors());
 
 app.use('/',allRoutes);
 

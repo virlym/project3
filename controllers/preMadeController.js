@@ -54,28 +54,18 @@ router.post("/", function(req, res) {
         return res.status(401).send("invalid user path");
     }
     console.log(loggedInUser);
-    db.PreMade.findOne({
-        where:{
-            id:req.body.id
-        }
-    }).then(function(preData) {
-        if(preData.baker_id === loggedInUser.id){
-            db.PreMade.create({
-                name: req.body.name,
-                price: req.body.price,
-                ingredients: req.body.ingredients,
-                description: req.body.description,
-                img: req.body.img,
-                baker_id: loggedInUser.id
-            }).then(function(newInv) {
-               return res.json(newInv);
-            }).catch(function(err) {
-                console.log(err);
-                return res.status(500).send("something want wrong");
-            })
-        } else{
-            return res.status(401).send("not your baked goods")
-        }
+    db.PreMade.create({
+        name: req.body.name,
+        price: req.body.price,
+        ingredients: req.body.ingredients,
+        description: req.body.description,
+        img: req.body.img,
+        baker_id: loggedInUser.id
+    }).then(function(newInv) {
+       return res.json(newInv);
+    }).catch(function(err) {
+        console.log(err);
+        return res.status(500).send("something want wrong");
     });
 });
 

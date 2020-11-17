@@ -50,12 +50,48 @@ module.exports = function (sequelize, DataTypes) {
     });
 
     User.associate = function (models) {
-        User.hasMany(models.Order);
-        User.hasMany(models.PreMade);
-        User.hasMany(models.Inventory);
-        User.hasMany(models.Pricing);
-        User.hasMany(models.Revenue);
-        User.hasMany(models.InvChanges);
+        User.hasMany(models.Order, {
+            foreignKey: {
+                name: "baker_id",
+            },
+            onDelete: "CASCADE"
+        });
+        User.hasMany(models.Order, {
+            foreignKey: {
+                name: "buyer_id",
+            },
+            onDelete: "CASCADE"
+        });
+        User.hasMany(models.PreMade, {
+            foreignKey: {
+                name: "baker_id",
+            },
+            onDelete: "CASCADE"
+        });
+        User.hasMany(models.Inventory, {
+            foreignKey: {
+                name: "baker_id",
+            },
+            onDelete: "CASCADE"
+        });
+        User.hasMany(models.Pricing, {
+            foreignKey: {
+                name: "baker_id",
+            },
+            onDelete: "CASCADE"
+        });
+        User.hasMany(models.Revenue, {
+            foreignKey: {
+                name: "baker_id",
+            },
+            onDelete: "CASCADE"
+        });
+        User.hasMany(models.InvChanges, {
+            foreignKey: {
+                name: "baker_id",
+            },
+            onDelete: "CASCADE"
+        });
     };
 
     User.beforeCreate(function (user) {

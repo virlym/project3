@@ -54,26 +54,16 @@ router.post("/", function(req, res) {
         return res.status(401).send("invalid user path");
     }
     console.log(loggedInUser);
-    db.Pricing.findOne({
-        where:{
-            id:req.body.id
-        }
-    }).then(function(priceData) {
-        if(priceData.baker_id === loggedInUser.id){
-            db.Pricing.create({
-                name: req.body.name,
-                price: req.body.price,
-                type: req.body.type,
-                baker_id: loggedInUser.id
-            }).then(function(newPrice) {
-               return res.json(newPrice);
-            }).catch(function(err) {
-                console.log(err);
-                return res.status(500).send("something want wrong");
-            })
-        } else{
-            return res.status(401).send("not your prices")
-        }
+    db.Pricing.create({
+        name: req.body.name,
+        price: req.body.price,
+        type: req.body.type,
+        baker_id: loggedInUser.id
+    }).then(function(newPrice) {
+       return res.json(newPrice);
+    }).catch(function(err) {
+        console.log(err);
+        return res.status(500).send("something want wrong");
     });
 });
 

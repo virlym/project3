@@ -1,14 +1,6 @@
 module.exports = function(sequelize, DataTypes) {
     var InvChanges = sequelize.define('InvChanges', {
-        name: {
-            type: DataTypes.STRING,
-            allowNull: false
-        },
-        quantity: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
-        metric: {
+        ingredients: {
             type: DataTypes.STRING,
             allowNull: false
         },
@@ -16,7 +8,7 @@ module.exports = function(sequelize, DataTypes) {
             type: DataTypes.BOOLEAN,
             allowNull: false
         },
-        type: {
+        origin: {
             type: DataTypes.STRING,
             allowNull: false
         }

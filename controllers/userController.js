@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require('../models')
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { Op } = require("sequelize");
 
 function checkAuthStatus (request) {
     //console.log(request.headers);
@@ -90,9 +91,12 @@ router.get("/buyerProfile", (req, res) => {
         },
         include: [{
             model: db.Order,
-            where: {
-                buyer_id: loggedInUser.id
-            }
+            on: {buyer_id: loggedInUser.id},
+            include:[{
+                model: db.User,
+                on: {'id': {[Op.col]: 'baker_id'}},
+                attributes:['address', 'email', 'phone']
+            }]
         }]
     }).then(dbUser => {
         return res.json(dbUser)
@@ -112,6 +116,7 @@ router.get("/bakerProfile", (req, res) => {
     if (!loggedInUser.isOwner){
         return res.status(401).send("invalid user path");
     }
+    console.log({[Op.col]: "baker_id"});
     db.User.findOne({
         where: {
             id: loggedInUser.id
@@ -119,39 +124,31 @@ router.get("/bakerProfile", (req, res) => {
         include: [
             {
                 model: db.Order,
-                where: {
-                    baker_id: loggedInUser.id
-                }
+                on: {baker_id: loggedInUser.id},
+                include:[{
+                    model: db.User,
+                    attributes:['address', 'email', 'phone']
+                }]
             },
             {
                 model: db.Inventory,
-                where: {
-                    baker_id: loggedInUser.id
-                }
+                on: {baker_id: loggedInUser.id},
             },
             {
                 model: db.InvChanges,
-                where: {
-                    baker_id: loggedInUser.id
-                }
+                on: {baker_id: loggedInUser.id},
             },
             {
                 model: db.PreMade,
-                where: {
-                    baker_id: loggedInUser.id
-                }
+                on: {baker_id: loggedInUser.id},
             },
             {
                 model: db.Pricing,
-                where: {
-                    baker_id: loggedInUser.id
-                }
+                on: {baker_id: loggedInUser.id},
             },
             {
                 model: db.Revenue,
-                where: {
-                    baker_id: loggedInUser.id
-                }
+                on: {baker_id: loggedInUser.id},
             }
         ]
     }).then(dbUser => {

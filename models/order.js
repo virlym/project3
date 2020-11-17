@@ -1,6 +1,6 @@
 module.exports = function(sequelize, DataTypes) {
     var Order = sequelize.define('Order', {
-         sale: {
+        sale: {
             type: DataTypes.DECIMAL(10,2),
             allowNull: false
         },
@@ -26,14 +26,14 @@ module.exports = function(sequelize, DataTypes) {
     Order.associate = function (models) {
         Order.belongsTo(models.User, {
             foreignKey: {
-            name : "buyer_id",
+            name : "baker_id",
             type: DataTypes.INTEGER,
             allowNull: false
             }
         });
         Order.belongsTo(models.User, {
             foreignKey: {
-            name : "baker_id",
+            name : "buyer_id",
             type: DataTypes.INTEGER,
             allowNull: false
             }

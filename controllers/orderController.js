@@ -51,29 +51,19 @@ router.post("/", function(req, res) {
         return res.status(401).send("login first")
     }
     console.log(loggedInUser);
-    db.Order.findOne({
-        where:{
-            id:req.body.id
-        }
-    }).then(function(orderData) {
-        if(orderData.buyer_id === loggedInUser.id){
-            db.Order.create({
-                sale: req.body.sale,
-                ingredients: req.body.ingredients,
-                deadline: req.body.deadline,
-                status: req.body.status,
-                description: req.body.description,
-                baker_id: req.body.baker_id,
-                buyer_id: loggedInUser.id
-            }).then(function(newInv) {
-               return res.json(newInv);
-            }).catch(function(err) {
-                console.log(err);
-                return res.status(500).send("something want wrong");
-            })
-        } else{
-            return res.status(401).send("not your order")
-        }
+    db.Order.create({
+        sale: req.body.sale,
+        ingredients: req.body.ingredients,
+        deadline: req.body.deadline,
+        status: req.body.status,
+        description: req.body.description,
+        baker_id: req.body.baker_id,
+        buyer_id: loggedInUser.id
+    }).then(function(newInv) {
+       return res.json(newInv);
+    }).catch(function(err) {
+        console.log(err);
+        return res.status(500).send("something want wrong");
     });
 });
 

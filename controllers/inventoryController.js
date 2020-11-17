@@ -54,27 +54,17 @@ router.post("/", function(req, res) {
         return res.status(401).send("invalid user path");
     }
     console.log(loggedInUser);
-    db.Inventory.findOne({
-        where:{
-            id:req.body.id
-        }
-    }).then(function(invData) {
-        if(invData.baker_id === loggedInUser.id){
-            db.Inventory.create({
-                name: req.body.name,
-                quantity: req.body.quantity,
-                metric: req.body.metric,
-                expires: req.body.expires,
-                baker_id: loggedInUser.id
-            }).then(function(newInv) {
-               return res.json(newInv);
-            }).catch(function(err) {
-                console.log(err);
-                return res.status(500).send("something want wrong");
-            })
-        } else{
-            return res.status(401).send("not your inventory")
-        }
+    db.Inventory.create({
+        name: req.body.name,
+        quantity: req.body.quantity,
+        metric: req.body.metric,
+        expires: req.body.expires,
+        baker_id: loggedInUser.id
+    }).then(function(newInv) {
+       return res.json(newInv);
+    }).catch(function(err) {
+        console.log(err);
+        return res.status(500).send("something want wrong");
     });
 });
 
