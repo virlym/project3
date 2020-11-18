@@ -7,7 +7,6 @@ const { Op } = require("sequelize");
 
 function checkAuthStatus (request) {
     //console.log(request.headers);
-    console.log("hi");
     if (!request.headers.authorization) {
         return false
     }
@@ -29,7 +28,7 @@ function checkAuthStatus (request) {
 router.get("/", function (req, res) {
     db.User.findAll().then( function (dbUsers) {
         return res.json(dbUsers);
-    }).catch(err => {
+    }).catch(function(err) {
         console.log(err);
         return res.status(500).end();
     });
@@ -47,6 +46,18 @@ router.post("/", function (req, res) {
         return res.json(newUser);
     }).catch(function(err) {
         console.log(err);
+        console.log(err.errors[0].message);
+        //err.errors[0].message
+        //users.email must be unique : that email is already in use
+        //Validation isEmail on email failed : please enter an actual email
+        //Validation is on phone failed : please enter only numbers
+        //Validation len on phone failed : please enter an 10 or 11 digit number
+        //Validation is on username failed : username must only contain letters and numbers
+        //Validation len on username failed : username must be between 4 and 24 characters
+        //Validation is on password failed : password must only contain letters and numbers
+        //Validation len on password failed : password must be between 6 and 24 characters
+        //Validation is on address failed : address must only contain letters and numbers
+        //Validation len on address failed : please enter an address
         return res.status(500).end();
     });
 });
@@ -56,10 +67,14 @@ router.post("/login", function (req, res) {
         where: {
             email: req.body.email,
         }
-    }).then(foundUser => {
+    }).then(function(foundUser) {
         if (!foundUser) {
-            return res.status(404).send("USER NOT FOUND")
+            return res.status(404).send("USER NOT FOUND");
         }
+        if (!foundUser.isActive){
+            return res.status(404).send("Account has been disabled");
+        }
+
         if (bcrypt.compareSync(req.body.password, foundUser.password)) {
             const userTokenInfo = {
                 email: foundUser.email,
@@ -71,7 +86,8 @@ router.post("/login", function (req, res) {
             }
             const token = jwt.sign(userTokenInfo, process.env.JWT_SECRET, { expiresIn: "2h" });
             return res.status(200).json({ token: token })
-        } else {
+        } 
+        else {
             return res.status(403).send("wrong password")
         }
     });
@@ -79,7 +95,6 @@ router.post("/login", function (req, res) {
 
 router.get("/buyer", (req, res) => {
     const loggedInUser = checkAuthStatus(req);
-    console.log(loggedInUser);
     if (!loggedInUser) {
         return res.status(401).send("invalid token")
     }
@@ -99,9 +114,9 @@ router.get("/buyer", (req, res) => {
                 attributes:['address', 'email', 'phone']
             }]
         }]
-    }).then(dbUser => {
-        return res.json(dbUser)
-    }).catch(err => {
+    }).then(function(dbUser) {
+        return res.json(dbUser);
+    }).catch(function(err) {
         console.log(err);
         return res.status(500).send("an error occurred please try again later");
     });
@@ -109,16 +124,13 @@ router.get("/buyer", (req, res) => {
 });
 
 router.get("/baker", (req, res) => {
-    console.log("entered");
     const loggedInUser = checkAuthStatus(req);
-    console.log(loggedInUser);
     if (!loggedInUser) {
         return res.status(401).send("invalid token")
     }
     if (!loggedInUser.isOwner){
         return res.status(401).send("invalid user path");
     }
-    //console.log({[Op.col]: "baker_id"});
     db.User.findOne({
         where: {
             id: loggedInUser.id
@@ -153,9 +165,43 @@ router.get("/baker", (req, res) => {
                 on: {baker_id: loggedInUser.id},
             }
         ]
-    }).then(dbUser => {
-        return res.json(dbUser)
-    }).catch(err => {
+    }).then(function(dbUser) {
+        return res.json(dbUser);
+    }).catch(function(err) {
+        console.log(err);
+        return res.status(500).send("an error occurred please try again later");
+    });
+
+});
+
+router.put("/disable", (req, res) => {
+    const loggedInUser = checkAuthStatus(req);
+    console.log(loggedInUser);
+    if (!loggedInUser) {
+        return res.status(401).send("invalid token")
+    }
+    if (!loggedInUser.isOwner){
+        return res.status(401).send("invalid user path");
+    }
+    //console.log({[Op.col]: "baker_id"});
+    db.User.findOne({
+        where: {
+            id: loggedInUser.id
+        }
+    }).then(function(dbUser) {
+        db.User.update({
+            isActive: false
+        }, {
+            where: {
+                id: dbUser.id
+            }
+        }).then(function(editUser) {
+            return res.json(editUser);
+        }).catch(function(err) {
+            console.log(err);
+            return res.status(500).send("an error occurred please try again later");
+        });
+    }).catch(function(err) {
         console.log(err);
         return res.status(500).send("an error occurred please try again later");
     });

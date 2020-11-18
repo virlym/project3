@@ -31,7 +31,12 @@ module.exports = function (sequelize, DataTypes) {
         },
         address: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: false,
+            validate:
+            {
+                is: /[a-zA-Z0-9]+$/g,
+                len: [2]
+            }
         },
         phone: {
             type: DataTypes.STRING,
@@ -43,7 +48,13 @@ module.exports = function (sequelize, DataTypes) {
         },
         isOwner: {
             type: DataTypes.BOOLEAN,
-            allowNull: false
+            allowNull: false,
+            defaultValue: false
+        },
+        isActive: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true
         }
     }, {
         timestamps: false
@@ -53,44 +64,37 @@ module.exports = function (sequelize, DataTypes) {
         User.hasMany(models.Order, {
             foreignKey: {
                 name: "baker_id",
-            },
-            onDelete: "CASCADE"
+            }
         });
         User.hasMany(models.Order, {
             foreignKey: {
                 name: "buyer_id",
-            },
-            onDelete: "CASCADE"
+            }
         });
         User.hasMany(models.PreMade, {
             foreignKey: {
                 name: "baker_id",
-            },
-            onDelete: "CASCADE"
+            }
         });
         User.hasMany(models.Inventory, {
             foreignKey: {
                 name: "baker_id",
-            },
-            onDelete: "CASCADE"
+            }
         });
         User.hasMany(models.Pricing, {
             foreignKey: {
                 name: "baker_id",
-            },
-            onDelete: "CASCADE"
+            }
         });
         User.hasMany(models.Revenue, {
             foreignKey: {
                 name: "baker_id",
-            },
-            onDelete: "CASCADE"
+            }
         });
         User.hasMany(models.InvChanges, {
             foreignKey: {
                 name: "baker_id",
-            },
-            onDelete: "CASCADE"
+            }
         });
     };
 
