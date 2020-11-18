@@ -11,10 +11,6 @@ module.exports = function(sequelize, DataTypes) {
         metric: {
             type: DataTypes.STRING,
             allowNull: false
-        },
-        expires: {
-            type: DataTypes.DATE,
-            allowNull: false
         }
          
     });
