@@ -85,7 +85,7 @@ router.post("/login", function (req, res) {
                 isOwner: foundUser.isOwner
             }
             const token = jwt.sign(userTokenInfo, process.env.JWT_SECRET, { expiresIn: "2h" });
-            return res.status(200).json({ token: token })
+            return res.status(200).json({ token: token, id : foundUser.id })
         } 
         else {
             return res.status(403).send("wrong password")
