@@ -98,9 +98,6 @@ router.get("/buyer", (req, res) => {
     if (!loggedInUser) {
         return res.status(401).send("invalid token")
     }
-    if (loggedInUser.isOwner){
-        return res.status(401).send("invalid user path");
-    }
     db.User.findOne({
         where: {
             id: loggedInUser.id
@@ -208,10 +205,14 @@ router.put("/disable", (req, res) => {
 
 });
 
-router.get("/:id", function(req, res) {
+router.get("/profile", function(req, res) {
+    const loggedInUser = checkAuthStatus(req);
+    if (!loggedInUser) {
+        return res.status(401).send("invalid token")
+    }
     db.User.findOne({
         where: {
-            id: req.params.id
+            id: loggedInUser.id
         }
     }).then(function(dbUser) {
         return res.json(dbUser);
