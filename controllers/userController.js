@@ -108,7 +108,7 @@ router.get("/buyer", (req, res) => {
             include:[{
                 model: db.User,
                 on: {'id': {[Op.col]: 'baker_id'}},
-                attributes:['address', 'email', 'phone']
+                attributes:['username', 'address', 'email', 'phone']
             }]
         }]
     }).then(function(dbUser) {
@@ -138,7 +138,7 @@ router.get("/baker", (req, res) => {
                 on: {baker_id: loggedInUser.id},
                 include:[{
                     model: db.User,
-                    attributes:['address', 'email', 'phone']
+                    attributes:['username', 'address', 'email', 'phone']
                 }]
             },
             {
