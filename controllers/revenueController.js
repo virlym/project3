@@ -58,6 +58,7 @@ router.post("/", function(req, res) {
         ingredients: req.body.ingredients,
         sales: req.body.sales,
         month: req.body.month,
+        description: req.body.description,
         baker_id: loggedInUser.id
     }).then(function(newRev) {
        return res.json(newRev);
@@ -84,7 +85,8 @@ router.put("/:id", function(req, res) {
             db.Revenue.update({
                 ingredients: req.body.ingredients,
                 sales: req.body.sales,
-                month: req.body.month
+                month: req.body.month,
+                description: req.body.description
             }, {
                     where: {
                         id: rev.id

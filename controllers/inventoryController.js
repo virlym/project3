@@ -21,8 +21,6 @@ function checkAuthStatus(request) {
     return loggedInUser
 }
 
-
-
 router.get("/", function(req, res) {
     db.Inventory.findAll().then(function(inv) {
         return res.json(inv);
@@ -58,7 +56,6 @@ router.post("/", function(req, res) {
         name: req.body.name,
         quantity: req.body.quantity,
         metric: req.body.metric,
-        expires: req.body.expires,
         baker_id: loggedInUser.id
     }).then(function(newInv) {
        return res.json(newInv);
@@ -85,8 +82,7 @@ router.put("/:id", function(req, res) {
             db.Inventory.update({
                 name: req.body.name,
                 quantity: req.body.quantity,
-                metric: req.body.metric,
-                expires: req.body.expires
+                metric: req.body.metric
             }, {
                     where: {
                         id: inv.id

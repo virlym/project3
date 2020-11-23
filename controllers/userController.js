@@ -85,7 +85,7 @@ router.post("/login", function (req, res) {
                 isOwner: foundUser.isOwner
             }
             const token = jwt.sign(userTokenInfo, process.env.JWT_SECRET, { expiresIn: "2h" });
-            return res.status(200).json({ token: token })
+            return res.status(200).json({ token: token, id : foundUser.id })
         } 
         else {
             return res.status(403).send("wrong password")
@@ -98,9 +98,6 @@ router.get("/buyer", (req, res) => {
     if (!loggedInUser) {
         return res.status(401).send("invalid token")
     }
-    if (loggedInUser.isOwner){
-        return res.status(401).send("invalid user path");
-    }
     db.User.findOne({
         where: {
             id: loggedInUser.id
@@ -111,7 +108,7 @@ router.get("/buyer", (req, res) => {
             include:[{
                 model: db.User,
                 on: {'id': {[Op.col]: 'baker_id'}},
-                attributes:['address', 'email', 'phone']
+                attributes:['username', 'address', 'email', 'phone']
             }]
         }]
     }).then(function(dbUser) {
@@ -141,7 +138,7 @@ router.get("/baker", (req, res) => {
                 on: {baker_id: loggedInUser.id},
                 include:[{
                     model: db.User,
-                    attributes:['address', 'email', 'phone']
+                    attributes:['username', 'address', 'email', 'phone']
                 }]
             },
             {
@@ -208,10 +205,14 @@ router.put("/disable", (req, res) => {
 
 });
 
-router.get("/:id", function(req, res) {
+router.get("/profile", function(req, res) {
+    const loggedInUser = checkAuthStatus(req);
+    if (!loggedInUser) {
+        return res.status(401).send("invalid token")
+    }
     db.User.findOne({
         where: {
-            id: req.params.id
+            id: loggedInUser.id
         }
     }).then(function(dbUser) {
         return res.json(dbUser);

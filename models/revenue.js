@@ -11,6 +11,11 @@ module.exports = function(sequelize, DataTypes) {
         month: {
             type: DataTypes.STRING,
             allowNull: false
+        },
+        description: {
+            type: DataTypes.STRING,
+            allowNull: true,
+            defaultValue: ""
         }
          
     }, {
