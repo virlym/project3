@@ -17,7 +17,7 @@ app.use(express.json());
 
 //PRODUCTION CORS
 app.use(cors({
-    origin:["https://the-pantry-app.herokuapp.com/"]
+    origin:["https://the-pantry-app.herokuapp.com"]
 }));
 
 //DEV CORS
